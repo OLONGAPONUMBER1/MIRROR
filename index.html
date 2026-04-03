@@ -19,16 +19,16 @@ footer { position: fixed; bottom: 0; width: 100%; background: #111; color: #888;
 <textarea id="note" placeholder="Type emergency updates here..."></textarea>
 <footer>Emergency Dispatch System | Live Mode</footer>
 
-<!-- Firebase SDK -->
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+<!-- Firebase v9 SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-<script>
 // 🔹 Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyAGUja1W_jcf6-Wze-kTu4mAPIOMUNqsho",
   authDomain: "drrmo-notes-v2.firebaseapp.com",
-  databaseURL: "https://drrmo-notes-v2-default-rtdb.firebaseio.com/",
+  databaseURL: "https://drrmo-notes-v2-default-rtdb.asia-southeast1.firebasedatabase.app/",
   projectId: "drrmo-notes-v2",
   storageBucket: "drrmo-notes-v2.firebasestorage.app",
   messagingSenderId: "481037900330",
@@ -36,18 +36,18 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const noteRef = db.ref("sharedNote");
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const noteRef = ref(db, "sharedNote");
 const textarea = document.getElementById("note");
 
-// Send updates to Firebase
+// Update Firebase on input
 textarea.addEventListener("input", () => {
-  noteRef.set(textarea.value);
+  set(noteRef, textarea.value);
 });
 
-// Receive updates from Firebase
-noteRef.on("value", (snapshot) => {
+// Listen for changes in Firebase
+onValue(noteRef, (snapshot) => {
   const val = snapshot.val() || "";
   if (textarea.value !== val) {
     textarea.value = val;
