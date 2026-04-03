@@ -24,15 +24,15 @@ footer { position: fixed; bottom: 0; width: 100%; background: #111; color: #888;
 <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
-// 🔹 Your Firebase config
+// 🔹 Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyDD1jLprZWRWqQfX5rIxvgtesNhkYAcxLE",
-  authDomain: "drrmo-notes.firebaseapp.com",
-  projectId: "drrmo-notes",
-  storageBucket: "drrmo-notes.firebasestorage.app",
-  messagingSenderId: "808452037626",
-  appId: "1:808452037626:web:cc4202a3bea499db236243",
-  databaseURL: "https://drrmo-notes-default-rtdb.firebaseio.com/"
+  apiKey: "AIzaSyAGUja1W_jcf6-Wze-kTu4mAPIOMUNqsho",
+  authDomain: "drrmo-notes-v2.firebaseapp.com",
+  databaseURL: "https://drrmo-notes-v2-default-rtdb.firebaseio.com/",
+  projectId: "drrmo-notes-v2",
+  storageBucket: "drrmo-notes-v2.firebasestorage.app",
+  messagingSenderId: "481037900330",
+  appId: "1:481037900330:web:2112e52012a2ccd890c153"
 };
 
 // Initialize Firebase
@@ -41,12 +41,12 @@ const db = firebase.database();
 const noteRef = db.ref("sharedNote");
 const textarea = document.getElementById("note");
 
-// Send updates to Firebase when typing
+// Send updates to Firebase
 textarea.addEventListener("input", () => {
   noteRef.set(textarea.value);
 });
 
-// Receive updates from Firebase (live sync)
+// Receive updates from Firebase
 noteRef.on("value", (snapshot) => {
   const val = snapshot.val() || "";
   if (textarea.value !== val) {
