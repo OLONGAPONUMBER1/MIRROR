@@ -3,102 +3,54 @@
 <head>
 <meta charset="UTF-8">
 <title>DRRMO Live Emergency Notes</title>
-
 <style>
-body {
-  margin: 0;
-  font-family: "Segoe UI", monospace;
-  background: #0b0f14;
-  color: #fff;
-}
-
-header {
-  background: #8b0000;
-  padding: 15px;
-  text-align: center;
-  font-size: 22px;
-  font-weight: bold;
-  letter-spacing: 1px;
-}
-
-.status {
-  text-align: center;
-  font-size: 12px;
-  padding: 5px;
-  background: #111;
-  color: #00ffcc;
-}
-
-textarea {
-  width: 100%;
-  height: calc(100vh - 80px);
-  border: none;
-  outline: none;
-  resize: none;
-  padding: 20px;
-  font-size: 18px;
-  background: #0b0f14;
-  color: #00ffcc;
-}
-
-textarea::placeholder {
-  color: #555;
-}
-
-footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  background: #111;
-  color: #888;
-  text-align: center;
-  padding: 5px;
-  font-size: 11px;
-}
+body { margin: 0; font-family: "Segoe UI", monospace; background: #0b0f14; color: #fff; }
+header { background: #8b0000; padding: 15px; text-align: center; font-size: 22px; font-weight: bold; letter-spacing: 1px; }
+.status { text-align: center; font-size: 12px; padding: 5px; background: #111; color: #00ffcc; }
+textarea { width: 100%; height: calc(100vh - 80px); border: none; outline: none; resize: none; padding: 20px; font-size: 18px; background: #0b0f14; color: #00ffcc; }
+textarea::placeholder { color: #555; }
+footer { position: fixed; bottom: 0; width: 100%; background: #111; color: #888; text-align: center; padding: 5px; font-size: 11px; }
 </style>
 </head>
-
 <body>
 
-<header>
-🚨 DRRMO LIVE EMERGENCY NOTES 🚨
-</header>
-
-<div class="status">
-● LIVE LOCAL SYNC ACTIVE
-</div>
-
+<header>🚨 DRRMO LIVE EMERGENCY NOTES 🚨</header>
+<div class="status">● LIVE SYNC ACTIVE</div>
 <textarea id="note" placeholder="Type emergency updates here..."></textarea>
+<footer>Emergency Dispatch System | Live Mode</footer>
 
-<footer>
-Emergency Dispatch System | Local Mirror Mode
-</footer>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 
 <script>
-// BroadcastChannel for live sync (same browser / network context)
-const channel = new BroadcastChannel("drrmo_notes");
-
-// Load saved text
-const note = document.getElementById("note");
-note.value = localStorage.getItem("drrmo_note") || "";
-
-// Send updates
-note.addEventListener("input", () => {
-  localStorage.setItem("drrmo_note", note.value);
-  channel.postMessage(note.value);
-});
-
-// Receive updates
-channel.onmessage = (event) => {
-  if (note.value !== event.data) {
-    note.value = event.data;
-  }
+// 🔹 Your Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyDD1jLprZWRWqQfX5rIxvgtesNhkYAcxLE",
+  authDomain: "drrmo-notes.firebaseapp.com",
+  projectId: "drrmo-notes",
+  storageBucket: "drrmo-notes.firebasestorage.app",
+  messagingSenderId: "808452037626",
+  appId: "1:808452037626:web:cc4202a3bea499db236243",
+  databaseURL: "https://drrmo-notes-default-rtdb.firebaseio.com/"
 };
 
-// Sync across tabs via storage event
-window.addEventListener("storage", (e) => {
-  if (e.key === "drrmo_note") {
-    note.value = e.newValue;
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const noteRef = db.ref("sharedNote");
+const textarea = document.getElementById("note");
+
+// Send updates to Firebase when typing
+textarea.addEventListener("input", () => {
+  noteRef.set(textarea.value);
+});
+
+// Receive updates from Firebase (live sync)
+noteRef.on("value", (snapshot) => {
+  const val = snapshot.val() || "";
+  if (textarea.value !== val) {
+    textarea.value = val;
   }
 });
 </script>
